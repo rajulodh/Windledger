@@ -131,11 +131,11 @@ not January 2026 records, so they are not used in the January replay.
 - [x] Elexon-only national WIND actual and forecast data for January 2026.
 - [x] Docker configuration and local run instructions.
 - [x] README documents the product, files, setup, technical design, and AI use.
-- [ ] Public anonymous GitHub repository: not created; this workspace is not a
-  Git repository and no GitHub repository credentials are configured.
-- [ ] Public Vercel or Heroku deployment: not created; deployment needs an
-  authenticated provider account and deployment tooling. No public app URL is
-  available to submit yet.
+- [ ] Public anonymous GitHub repository: not created; publish this local Git
+  repository to GitHub before importing it into Vercel.
+- [ ] Public Vercel deployment: not created; deployment needs an authenticated
+  Vercel account and a GitHub repository. No public app URL is available to
+  submit yet.
 - [ ] Unlisted YouTube demo (maximum 10 minutes): not recorded or uploaded.
   Record a customer walkthrough (up to 5 minutes) and technical review (up to
   5 minutes), then add its unlisted URL here.
@@ -182,22 +182,25 @@ docker compose up --build
 Open `http://localhost:8000`. The app needs outbound network access to
 `data.elexon.co.uk` on its first load.
 
-## Deploy to Heroku
+## Deploy to Vercel as one project
 
-The repository includes `heroku.yml` and a production `Dockerfile`. With the
-Heroku CLI installed and an authenticated Heroku account, create a container
-stack app, then deploy the repository:
+The root `vercel.json` configures Vercel Services so the Vite frontend and
+FastAPI backend build and deploy together as one Vercel project on one domain.
+Requests to `/api/*` go to FastAPI; all other requests go to the frontend. The
+frontend uses the relative `/api` path, so no separate backend URL or CORS setup
+is needed.
 
-```powershell
-heroku login
-heroku create YOUR-APP-NAME
-heroku stack:set container -a YOUR-APP-NAME
-git push heroku main
-```
+1. Push this repository to GitHub.
+2. In Vercel, choose **Add New → Project** and import the repository.
+3. Set the project root to the directory containing this README and
+   `vercel.json` (the repository root). Do not choose either standalone
+   frontend or backend import.
+4. Vercel should detect the `services` configuration. Deploy the multi-service
+   project; both services will use the same deployment URL.
 
-Deployment was not run from this workspace: it has no Heroku CLI, Docker
-executable, Git repository, or Heroku account credentials. The app is
-container-ready once those account-side prerequisites are supplied.
+Vercel Services are currently in beta. Deployment was not run from this
+workspace because no Vercel account is connected here. The app's initial API
+request needs outbound network access to `data.elexon.co.uk`.
 
 ## Validation
 
